@@ -34,24 +34,9 @@ class PalladiumCloaker implements CloakerInterface
         }
 
         $params = $this->collectParams($request);
-        $apiResponse = $this->httpClient->curlSend($params);
+        $apiResponse = $this->httpClient->execute($params);
 
-        $mode = match (true) {
-            (!$apiResponse || !$apiResponse->isValidTarget()) => CloakModeEnum::Error,
-            str_contains($apiResponse->target, $this->fakeTargetContains) => CloakModeEnum::Fake,
-            str_contains($apiResponse->target, $this->realTargetContains) => CloakModeEnum::Real,
-            default => CloakModeEnum::Response,
-        };
-
-        $response = new Response(
-            content: $apiResponse->content,
-            headers: [
-                'x-mode' => $apiResponse->mode->value,
-                'x-target' => $apiResponse->target,
-            ],
-        );
-
-        return new CloakerResult($mode, $response);
+        return $this->createResult($apiResponse);
     }
 
     private function collectParams(Request $request): array
@@ -69,5 +54,23 @@ class PalladiumCloaker implements CloakerInterface
                 'clientSecret' => $this->clientSecret,
             ],
         ];
+    }
+
+    private function createResult(PalladiumApiResponse $apiResponse): CloakerResult
+    {
+        return new CloakerResult(
+            mode: match (true) {
+                str_contains($apiResponse->target, $this->fakeTargetContains) => CloakModeEnum::Fake,
+                str_contains($apiResponse->target, $this->realTargetContains) => CloakModeEnum::Real,
+                !$apiResponse->status => CloakModeEnum::Error,
+                default => CloakModeEnum::Response,
+            },
+            response: new Response($apiResponse->content),
+            apiResponse: $apiResponse,
+            params: [
+                'mode' => $apiResponse->mode->value,
+                'target' => $apiResponse->target,
+            ]
+        );
     }
 }

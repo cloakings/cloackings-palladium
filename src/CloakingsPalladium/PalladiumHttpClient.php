@@ -12,20 +12,21 @@ use Throwable;
 class PalladiumHttpClient
 {
     public function __construct(
-        private readonly string $serverUrl = 'https://request.palladium.expert',
+        private readonly string $apiUrl = 'https://request.palladium.expert',
         private readonly LoggerInterface $logger = new NullLogger(),
     ) {
     }
 
-    public function curlSend(array $params): ?PalladiumApiResponse
+    public function execute(array $params): PalladiumApiResponse
     {
         $curl = $this->getCurl($params);
         if (!$curl) {
-            return null;
+            return PalladiumApiResponse::create([]);
         }
 
         $result = null;
         $status = 0;
+        $time = microtime(true);
         $responseString = curl_exec($curl);
         if ($responseString) {
             try {
@@ -35,20 +36,20 @@ class PalladiumHttpClient
                     $result = $responseArray;
                 }
             } catch (Throwable $e) {
-                $this->logger->error('palladium_request_error', ['status' => $status, 'params' => $params, 'response_string' => $responseString, 'exception' => $e]);
+                $this->logger->error('cloaking_request_error', ['service' => 'palladium', 'status' => $status, 'params' => $params, 'response_string' => $responseString, 'time' => $this->elapsedTime($time), 'exception' => $e]);
             }
         } else {
-            $this->logger->error('palladium_request_empty', ['params' => $params]);
+            $this->logger->error('cloaking_request_empty', ['service' => 'palladium', 'params' => $params, 'time' => $this->elapsedTime($time)]);
         }
-        $this->logger->info('palladium_request', ['result' => $result, 'status' => $status, 'params' => $params]);
+        $this->logger->info('cloaking_request', ['service' => 'palladium', 'result' => $result, 'status' => $status, 'params' => $params, 'time' => $this->elapsedTime($time)]);
 
-        return $result ? PalladiumApiResponse::create($result) : null;
+        return PalladiumApiResponse::create($result ?: []);
     }
 
     /** @noinspection CurlSslServerSpoofingInspection */
     private function getCurl(array $params): ?CurlHandle
     {
-        $curl = curl_init($this->serverUrl);
+        $curl = curl_init($this->apiUrl);
 
         if ($curl) {
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -61,10 +62,15 @@ class PalladiumHttpClient
             curl_setopt($curl, CURLOPT_TIMEOUT_MS, 4000);
             curl_setopt($curl, CURLOPT_FORBID_REUSE, true);
         } else {
-            $this->logger->error('palladium_request_error', ['reason' => 'no curl']);
+            $this->logger->error('cloaking_request_error', ['service' => 'palladium', 'reason' => 'no curl']);
             $curl = null;
         }
 
         return $curl;
+    }
+
+    private function elapsedTime(float $startTime): float
+    {
+        return round(microtime(true) - $startTime, 4);
     }
 }
