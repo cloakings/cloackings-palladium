@@ -23,12 +23,12 @@ class PalladiumApiResponse
     public function isValidTarget(): bool
     {
         return (
+            $this->target !== '' &&
             in_array($this->mode, [
                 PalladiumApiResponseModeEnum::Iframe,
                 PalladiumApiResponseModeEnum::Redirect,
                 PalladiumApiResponseModeEnum::TargetPath,
-            ], true) &&
-            $this->target !== ''
+            ], true)
         );
     }
 
