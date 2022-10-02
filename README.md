@@ -14,8 +14,8 @@ composer require cloakings/cloakings-palladium
 ### Basic Usage
 
 Register at https://palladium.expert. Create campaign:
-- Link to the target page: real.php
-- Link for bots: fake.php
+- Link to the target page: `real.php`
+- Link for bots: `fake.php`
 
 Click "download code" for plain PHP or Wordpress and look for:
 - clientId
