@@ -10,9 +10,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class PalladiumCloaker implements CloakerInterface
 {
-    private PalladiumDataCollector $dataCollector;
-    private PalladiumHttpClient $httpClient;
-
     public function __construct(
         private readonly int $clientId,
         private readonly string $clientCompany,
@@ -20,11 +17,9 @@ class PalladiumCloaker implements CloakerInterface
         private readonly PalladiumTrafficSourceEnum $trafficSource = PalladiumTrafficSourceEnum::Adwords,
         private readonly string $fakeTargetContains = 'fake',
         private readonly string $realTargetContains = 'real',
-        PalladiumDataCollector $dataCollector = null,
-        PalladiumHttpClient $httpClient = null,
+        private readonly PalladiumDataCollector $dataCollector = new PalladiumDataCollector(),
+        private readonly PalladiumHttpClient $httpClient = new PalladiumHttpClient(),
     ) {
-        $this->dataCollector = $dataCollector ?? new PalladiumDataCollector();
-        $this->httpClient = $httpClient ?? new PalladiumHttpClient();
     }
 
     public function handle(Request $request): CloakerResult
