@@ -45,3 +45,11 @@ If your filenames differ from `real.php` and `fake.php` change params `$fakeTarg
 in `PalladiumCloaker` constructor.
 
 Default traffic source is `PalladiumTrafficSourceEnum::Adwords` but you can change it to `Facebook` or `Tiktok`.
+
+## Original Logic
+
+Original library is located at `doc/original`:
+- `php` - plain PHP integration
+- `wordpress` - WordPress integration
+
+License for this repository doesn't cover that code.
