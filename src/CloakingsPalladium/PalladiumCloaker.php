@@ -34,7 +34,7 @@ class PalladiumCloaker implements CloakerInterface
         return $this->createResult($apiResponse);
     }
 
-    private function collectParams(Request $request): array
+    public function collectParams(Request $request): array
     {
         return [
             'request' => $this->dataCollector->collectRequestData($request),
