@@ -29,9 +29,8 @@ class PalladiumCloaker implements CloakerInterface
         }
 
         $params = $this->collectParams($request);
-        $apiResponse = $this->httpClient->execute($params);
 
-        return $this->createResult($apiResponse);
+        return $this->handleParams($params);
     }
 
     public function collectParams(Request $request): array
@@ -49,6 +48,13 @@ class PalladiumCloaker implements CloakerInterface
                 'clientSecret' => $this->clientSecret,
             ],
         ];
+    }
+
+    public function handleParams(array $params): CloakerResult
+    {
+        $apiResponse = $this->httpClient->execute($params);
+
+        return $this->createResult($apiResponse);
     }
 
     private function createResult(PalladiumApiResponse $apiResponse): CloakerResult
