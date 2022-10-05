@@ -26,7 +26,7 @@ class PalladiumHttpClient
         try {
             $startTime = microtime(true);
             $response = $this->httpClient->request(Request::METHOD_POST, $this->apiUrl, [
-                'body' => $params,
+                'body' => http_build_query($params),
                 'verify_peer' => false,
                 'verify_host' => false,
                 'max_duration' => 4000, // ms
@@ -36,7 +36,7 @@ class PalladiumHttpClient
             $status = $response->getStatusCode();
             $headers = $response->getHeaders();
             $content = $response->getContent();
-            $data = array_merge([
+            $data = array_merge(
                 Json::toArray(trim($content, " \t\n\r\0\x0B\"")),
                 [
                     'response_status' => $status,
@@ -44,7 +44,7 @@ class PalladiumHttpClient
                     'response_body' => $content,
                     'response_time' => $time,
                 ],
-            ]);
+            );
         } catch (Throwable $e) {
             $this->logger->error('cloaking_request_error', ['service' => self::SERVICE_NAME, 'params' => $params, 'status' => $status ?? 0, 'headers' => $headers ?? [], 'content' => $content ?? '', 'exception' => $e]);
 
