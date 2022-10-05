@@ -26,7 +26,7 @@ class PalladiumHttpClient
         try {
             $startTime = microtime(true);
             $response = $this->httpClient->request(Request::METHOD_POST, $this->apiUrl, [
-                'body' => http_build_query($params),
+                'body' => $params,
                 'verify_peer' => false,
                 'verify_host' => false,
                 'max_duration' => 4000, // ms
@@ -51,7 +51,7 @@ class PalladiumHttpClient
             return PalladiumApiResponse::create([]);
         }
 
-        $this->logger->error('cloaking_request', ['service' => self::SERVICE_NAME, 'params' => $params, 'status' => $status ?? 0, 'headers' => $headers ?? [], 'content' => $content ?? '', 'time' => $time ?? 0]);
+        $this->logger->info('cloaking_request', ['service' => self::SERVICE_NAME, 'params' => $params, 'status' => $status ?? 0, 'headers' => $headers ?? [], 'content' => $content ?? '', 'time' => $time ?? 0]);
 
         return PalladiumApiResponse::create($data ?? []);
     }
