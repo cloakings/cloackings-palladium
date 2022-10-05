@@ -37,7 +37,7 @@ class PalladiumHttpClient
             $headers = $response->getHeaders();
             $content = $response->getContent();
             $data = array_merge([
-                Json::toArray(trim($content)),
+                Json::toArray(trim($content, " \t\n\r\0\x0B\"")),
                 'response_status' => $status,
                 'response_headers' => $headers,
                 'response_body' => $content,
