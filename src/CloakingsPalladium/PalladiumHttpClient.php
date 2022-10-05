@@ -2,6 +2,7 @@
 
 namespace Cloakings\CloakingsPalladium;
 
+use Gupalo\Json\Json;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Component\HttpClient\CurlHttpClient;
@@ -36,7 +37,7 @@ class PalladiumHttpClient
             $headers = $response->getHeaders();
             $content = $response->getContent();
             $data = array_merge([
-                $response->toArray(),
+                Json::toArray(trim($content)),
                 'response_status' => $status,
                 'response_headers' => $headers,
                 'response_body' => $content,
