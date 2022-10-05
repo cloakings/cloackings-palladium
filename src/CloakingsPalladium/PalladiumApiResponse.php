@@ -38,7 +38,7 @@ class PalladiumApiResponse
 
     public static function create(array $apiResponse): self
     {
-        $status = (bool)($apiResponse['result'] ?: false);
+        $status = (bool)(($apiResponse['result'] ?? '') ?: false);
         $target = (string)($apiResponse['target'] ?? '');
         $mode = PalladiumApiResponseModeEnum::tryFrom((int)($apiResponse['mode'] ?? 0)) ?? PalladiumApiResponseModeEnum::Unknown;
         $content = (string)($apiResponse['content'] ?? '');
