@@ -10,6 +10,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class PalladiumCloaker implements CloakerInterface
 {
+    private ?PalladiumApiResponse $lastApiResponse = null;
+
     public function __construct(
         private readonly int $clientId,
         private readonly string $clientCompany,
@@ -53,11 +55,12 @@ class PalladiumCloaker implements CloakerInterface
     public function handleParams(array $params): CloakerResult
     {
         $apiResponse = $this->httpClient->execute($params);
+        $this->lastApiResponse = $apiResponse;
 
         return $this->createResult($apiResponse);
     }
 
-    private function createResult(PalladiumApiResponse $apiResponse): CloakerResult
+    public function createResult(PalladiumApiResponse $apiResponse): CloakerResult
     {
         return new CloakerResult(
             mode: match (true) {
@@ -73,5 +76,10 @@ class PalladiumCloaker implements CloakerInterface
                 'target' => $apiResponse->target,
             ]
         );
+    }
+
+    public function getLastApiResponse(): PalladiumApiResponse
+    {
+        return $this->lastApiResponse ?? PalladiumApiResponse::create([]);
     }
 }

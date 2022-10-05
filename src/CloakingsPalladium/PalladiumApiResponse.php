@@ -9,6 +9,10 @@ class PalladiumApiResponse
         public readonly string $target,
         public readonly PalladiumApiResponseModeEnum $mode,
         public readonly string $content,
+        public readonly int $responseStatus = 0,
+        public readonly array $responseHeaders = [],
+        public readonly string $responseBody = '',
+        public readonly float $responseTime = 0.0,
     ) {
     }
 
@@ -48,6 +52,10 @@ class PalladiumApiResponse
             target: $target,
             mode: $mode,
             content: $content,
+            responseStatus: (int)($apiResponse['response_status'] ?? 0),
+            responseHeaders: ($apiResponse['response_headers'] ?? []),
+            responseBody: ($apiResponse['response_body'] ?? ''),
+            responseTime: ($apiResponse['response_time'] ?? 0.0),
         );
     }
 }
