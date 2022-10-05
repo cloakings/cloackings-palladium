@@ -38,10 +38,12 @@ class PalladiumHttpClient
             $content = $response->getContent();
             $data = array_merge([
                 Json::toArray(trim($content, " \t\n\r\0\x0B\"")),
-                'response_status' => $status,
-                'response_headers' => $headers,
-                'response_body' => $content,
-                'response_time' => $time,
+                [
+                    'response_status' => $status,
+                    'response_headers' => $headers,
+                    'response_body' => $content,
+                    'response_time' => $time,
+                ],
             ]);
         } catch (Throwable $e) {
             $this->logger->error('cloaking_request_error', ['service' => self::SERVICE_NAME, 'params' => $params, 'status' => $status ?? 0, 'headers' => $headers ?? [], 'content' => $content ?? '', 'exception' => $e]);
