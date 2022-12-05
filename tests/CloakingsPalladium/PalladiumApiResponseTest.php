@@ -17,7 +17,7 @@ class PalladiumApiResponseTest extends TestCase
             'content' => 'test',
         ]);
 
-        self::assertTrue($r->status);
+        self::assertTrue($r->result);
         self::assertSame('fake.php', $r->target);
         self::assertSame(PalladiumApiResponseModeEnum::Redirect, $r->mode);
         self::assertSame('test', $r->content);

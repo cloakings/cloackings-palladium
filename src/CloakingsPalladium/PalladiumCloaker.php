@@ -17,8 +17,6 @@ class PalladiumCloaker implements CloakerInterface
         private readonly string $clientCompany,
         private readonly string $clientSecret,
         private readonly PalladiumTrafficSourceEnum $trafficSource = PalladiumTrafficSourceEnum::Adwords,
-        private readonly string $fakeTargetContains = 'fake',
-        private readonly string $realTargetContains = 'real',
         private readonly PalladiumDataCollector $dataCollector = new PalladiumDataCollector(),
         private readonly PalladiumHttpClient $httpClient = new PalladiumHttpClient(),
     ) {
@@ -63,12 +61,7 @@ class PalladiumCloaker implements CloakerInterface
     public function createResult(PalladiumApiResponse $apiResponse): CloakerResult
     {
         return new CloakerResult(
-            mode: match (true) {
-                str_contains($apiResponse->target, $this->fakeTargetContains) => CloakModeEnum::Fake,
-                str_contains($apiResponse->target, $this->realTargetContains) => CloakModeEnum::Real,
-                !$apiResponse->status => CloakModeEnum::Error,
-                default => CloakModeEnum::Response,
-            },
+            mode: $apiResponse->result ? CloakModeEnum::Real : CloakModeEnum::Fake,
             response: new Response($apiResponse->content),
             apiResponse: $apiResponse,
             params: [
