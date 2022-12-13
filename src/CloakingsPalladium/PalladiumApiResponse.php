@@ -3,6 +3,7 @@
 namespace Cloakings\CloakingsPalladium;
 
 use Cloakings\CloakingsCommon\CloakerApiResponseInterface;
+use Cloakings\CloakingsCommon\CloakerHelper;
 
 class PalladiumApiResponse implements CloakerApiResponseInterface
 {
@@ -104,7 +105,7 @@ class PalladiumApiResponse implements CloakerApiResponseInterface
             'request_id' => $this->requestId,
             'query' => $this->query,
             'response_status' => $this->responseStatus,
-            'response_headers' => $this->responseHeaders,
+            'response_headers' => CloakerHelper::flattenHeaders($this->responseHeaders),
             'response_body' => $this->responseBody,
             'response_time' => $this->responseTime,
         ];
