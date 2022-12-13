@@ -2,7 +2,9 @@
 
 namespace Cloakings\CloakingsPalladium;
 
-class PalladiumApiResponse
+use Cloakings\CloakingsCommon\CloakerApiResponseInterface;
+
+class PalladiumApiResponse implements CloakerApiResponseInterface
 {
     private function __construct(
         public readonly bool $result, // 0 - fake, 1 - real
@@ -60,5 +62,51 @@ class PalladiumApiResponse
             responseBody: ($apiResponse['response_body'] ?? ''),
             responseTime: ($apiResponse['response_time'] ?? 0.0),
         );
+    }
+
+    public function isReal(): bool
+    {
+        return $this->result;
+    }
+
+    public function isFake(): bool
+    {
+        return !$this->isReal();
+    }
+
+    public function getResponseStatus(): int
+    {
+        return $this->responseStatus;
+    }
+
+    public function getResponseHeaders(): array
+    {
+        return $this->responseHeaders;
+    }
+
+    public function getResponseBody(): string
+    {
+        return $this->responseBody;
+    }
+
+    public function getResponseTime(): float
+    {
+        return $this->responseTime;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'result' => $this->result,
+            'target' => $this->target,
+            'mode' => $this->mode->value,
+            'content' => $this->content,
+            'request_id' => $this->requestId,
+            'query' => $this->query,
+            'response_status' => $this->responseStatus,
+            'response_headers' => $this->responseHeaders,
+            'response_body' => $this->responseBody,
+            'response_time' => $this->responseTime,
+        ];
     }
 }
